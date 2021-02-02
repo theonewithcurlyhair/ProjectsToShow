@@ -1,0 +1,83 @@
+﻿@model  Model.Entities.User
+
+@if (Model != null)
+{
+    if (Model.Errors.Count > 0)
+    {
+        <div class="text-danger">
+            <ul>
+                @foreach (var e in Model.Errors)
+                {
+                    <li>@e.ErrorName</li>
+                }
+            </ul>
+        </div>
+    }
+}
+@if (ViewBag.Success != "")
+{
+    <p style="color:green">@ViewBag.Success</p>
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card m-b-20">
+            <div class="card-body">
+                <h4 class="mt-0 header-title">Modify Personal Data</h4>
+                <form class="form-horizontal" action="/Employee" method="post">
+                    @Html.AntiForgeryToken()
+                    @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.WorkPhoneNumber)
+                        @Html.EditorFor(model => model.WorkPhoneNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter work phone" } })
+                        @Html.ValidationMessageFor(m => m.WorkPhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CellPhoneNumber)
+                        @Html.EditorFor(model => model.CellPhoneNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter cell phone" } })
+                        @Html.ValidationMessageFor(m => m.CellPhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.StreetAddress)
+                        @Html.EditorFor(model => model.StreetAddress, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter street address" } })
+                        @Html.ValidationMessageFor(m => m.StreetAddress, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PostalCode)
+                        @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter postal code" } })
+                        @Html.ValidationMessageFor(m => m.PostalCode, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.City)
+                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter city" } })
+                        @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Country)
+                        @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Country" } })
+                        @Html.ValidationMessageFor(m => m.Country, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Province)
+                        @Html.EditorFor(model => model.Province, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Province" } })
+                        @Html.ValidationMessageFor(m => m.Province, "", new { @class = "text-danger" })
+                    </div>
+
+
+                    @*<div class="form-group">
+            @Html.LabelFor(m => m.Country)
+            @Html.EnumDropDownListFor(model => model.Country, new { htmlAttributes = new { @class = "form-control"} })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Province)
+            @Html.EnumDropDownListFor(model => model.Province, new { htmlAttributes = new { @class = "form-control" } })
+        </div>*@
+
+                    <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Modify</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

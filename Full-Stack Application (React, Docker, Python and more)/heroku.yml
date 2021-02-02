@@ -1,0 +1,13 @@
+setup:
+  config:
+    DJANGO_SETTINGS_MODULE: server.settings_prod
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile
+  config:
+    DJANGO_SETTINGS_MODULE: server.settings_prod
+run:
+  web: python3 server/manage.py runserver 0.0.0.0:$PORT

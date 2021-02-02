@@ -1,0 +1,291 @@
+﻿@section styles {
+    <!-- Responsive datatable examples -->
+    <link href="~/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- DataTables -->
+    <link href="~/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+    <link href="https://cdn.datatables.net/searchpanes/1.0.1/css/searchPanes.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css" rel="stylesheet" />
+}
+@using Model.Entities
+@model List<PurchaseOrder>
+@{
+    User currentUser = (User)Session["User"];
+}
+<div class="row">
+    <div class="col-12">
+        <div class="alert-info alert text-center"><strong>Click on the Table Row to Perform Changes</strong></div>
+        <div class="card m-b-20">
+            <div class="card-body">
+                <h3 class="mt-0 title text-center">@((ViewData["ProcessSort"] != null && (bool)ViewData["ProcessSort"] == true) ? $"Process Purchase Orders for {currentUser.DepartmentName}" : $"Browse Purchase Orders for {currentUser.FullName}" )</h3>
+
+                <div class="mt-5 row border rounded m-4 p-1">
+                    <h5 class="title col-sm">Filter by Date Range</h5>
+                    <label for="min" class="col-form-label">Start Date</label>
+                    <div class="col-sm-2">
+                        <input class="form-control form-control-sm" type="text" id="min">
+                    </div>
+                    <label for="min" class="col-form-label">Start Date</label>
+                    <div class="col-sm-2">
+                        <input class="form-control form-control-sm" type="text" id="max">
+                    </div>
+                    <br />
+                    <button id="clearDates" class="form-control-sm button mr-4">Clear</button>
+                </div>
+
+                <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Order Request ID</th>
+                            <th>Order Date</th>
+                            <th>Subtotal</th>
+                            <th>Taxes</th>
+                            <th>Total</th>
+                            <th>Initiating Employee</th>
+                            <th>Order Status</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        @foreach (PurchaseOrder o in Model)
+                        {
+                            <tr class='clickable-row' data-href="/PurchaseOrder/MaintainPO?PurchaseOrderID=@o.ID">
+                                <td>@o.ID</td>
+                                <td>@o.OrderDate.Date.ToLongDateString()</td>
+                                <td>@o.Subtotal.ToString("c")</td>
+                                <td>@o.Taxes.ToString("c")</td>
+                                <td>@o.Total.ToString("c")</td>
+                                <td>@o.CreatedEmployeeName</td>
+                                <td>@o.Status</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+
+@section scripts {
+    <!-- Required datatable js -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Buttons examples -->
+    <script src="~/plugins/datatables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/datatables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables/jszip.min.js"></script>
+    <script src="~/plugins/datatables/pdfmake.min.js"></script>
+    <script src="~/plugins/datatables/vfs_fonts.js"></script>
+    <script src="~/plugins/datatables/buttons.html5.min.js"></script>
+    <script src="~/plugins/datatables/buttons.print.min.js"></script>
+    <script src="~/plugins/datatables/buttons.colVis.min.js"></script>
+
+    <!-- Responsive examples -->
+    <script src="~/plugins/datatables/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables/responsive.bootstrap4.min.js"></script>
+
+    <!-- Datatable init js -->
+    @*<script src="~/Scripts/pages/datatables.init.js"></script>*@
+
+    <!-- Filtering -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/1.0.1/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js" integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk=" crossorigin="anonymous"></script>
+
+
+
+    @if (ViewData["ProcessSort"] != null && (bool)ViewData["ProcessSort"] == true)
+    {
+        <script>
+            $(".clickable-row").click(function () {
+                window.location = $(this).data("href");
+            });
+               var table = $('#datatable').DataTable({
+                dom: 'Pfrtip',
+                columnDefs: [
+                    {
+                        searchPanes: {
+                            show: false,
+                        },
+                        targets: [2, 3, 4]
+                    },
+                    {
+                        "type": "date", targets: 1
+                    },
+                    {
+                        searchPanes: { show: true },
+                        "type": "num", targets: [0,1,5,6]
+                    }
+                   ],
+                "order" : [[1, "asc"]]
+               });
+            $(document).ready(function () {
+                $.fn.dataTable.ext.search.push(
+                    function (settings, data, dataIndex) {
+                        var min = $('#min').datepicker("getDate");
+                        var max = $('#max').datepicker("getDate");
+                        var startDate = new Date(data[1]);
+                        if (min == null && max == null) { return true; }
+                        if (min == null && startDate <= max) { return true; }
+                        if (max == null && startDate >= min) { return true; }
+                        if (startDate <= max && startDate >= min) { return true; }
+                        return false;
+                    }
+                );
+
+
+                $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true });
+                $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true });
+            $('#min, #max').change(function () {
+                table.draw();
+            });
+
+            $('#clearDates').click(function () {
+                $('#min').val("");
+                $('#max').val("");
+                table.draw();
+            });
+
+        });
+        </script>
+    }
+    else
+    {
+        <script>
+            $(".clickable-row").click(function () {
+                window.location = $(this).data("href");
+            });
+               var table = $('#datatable').DataTable({
+                dom: 'Pfrtip',
+                columnDefs: [
+                    {
+                        searchPanes: {
+                            show: false,
+                        },
+                        targets: [2, 3, 4]
+                    },
+                    {
+                        "type": "date", targets: 1
+                    },
+                    {
+                        searchPanes: { show: true },
+                        "type": "num", targets: [0,1,6]
+                    }
+                   ],
+                "order" : [[1, "desc"]]
+               });
+            $(document).ready(function () {
+                $.fn.dataTable.ext.search.push(
+                    function (settings, data, dataIndex) {
+                        var min = $('#min').datepicker("getDate");
+                        var max = $('#max').datepicker("getDate");
+                        var startDate = new Date(data[1]);
+                        if (min == null && max == null) { return true; }
+                        if (min == null && startDate <= max) { return true; }
+                        if (max == null && startDate >= min) { return true; }
+                        if (startDate <= max && startDate >= min) { return true; }
+                        return false;
+                    }
+                );
+
+                $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true });
+                $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true });
+            $('#min, #max').change(function () {
+                table.draw();
+            });
+
+            $('#clearDates').click(function () {
+                $('#min').val("");
+                $('#max').val("");
+                table.draw();
+            });
+
+        });
+        </script>
+    }
+    <script>
+        $(document).ready(function () {
+            $(".clickable-row").click(function () {
+                window.location = $(this).data("href");
+            });
+
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    var min = $('#min').datepicker("getDate");
+                    var max = $('#max').datepicker("getDate");
+                    var startDate = new Date(data[1]);
+                    if (min == null && max == null) { return true; }
+                    if (min == null && startDate <= max) { return true; }
+                    if (max == null && startDate >= min) { return true; }
+                    if (startDate <= max && startDate >= min) { return true; }
+                    return false;
+                }
+            );
+
+
+            $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true });
+            $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true });
+            @*var table = $('#datatable').DataTable({
+                //language: {
+                //    searchPanes: {
+                //        clearMessage: 'Clear Selected Filters',
+                //        collapse: 'Filter',
+                //    }
+                //},
+                //buttons: [
+                //    'searchPanes'
+                //],
+                dom: 'Pfrtip',
+                columnDefs: [
+                    {
+                        searchPanes: {
+                            show: false,
+                        },
+                        targets: [2, 3, 4,7]
+                    },
+                    {
+                        "type": "date", targets: 1
+                    },
+                    {
+                        searchPanes: { show: true },
+                        "type": "num", targets: @(currentUser.IsSupervisor ? "[0,1,5,6]" : "[0,1,6]")
+                    },
+                    {
+                        "targets": [7],
+                        "visible": false,
+                        "searchable": false
+                    }
+                ]
+            });*@
+
+            $('#min, #max').change(function () {
+                table.draw();
+            });
+
+            $('#clearDates').click(function () {
+                $('#min').val("");
+                $('#max').val("");
+                table.draw();
+            });
+
+        });
+    </script>
+
+
+
+}

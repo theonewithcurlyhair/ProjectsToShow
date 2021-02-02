@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Capstone</string>
+
+    <string-array name="orderBy">
+        <item >ID</item>
+        <item >Department</item>
+        <item >LastName</item>
+    </string-array>
+</resources>

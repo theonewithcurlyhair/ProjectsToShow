@@ -1,0 +1,30 @@
+﻿@*@using BIgSystemSolutions_Web.Contants;
+@{
+    string controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+}
+
+<style type="text/css">
+    .page-title, .breadcrumb .breadcrumb-item {
+        text-transform: capitalize;
+    }
+</style>
+
+@if (controller == "dashboard" && action == "index")
+{
+    <h4 class="page-title">Dashboard</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">
+            Welcome to Big System Solutions Dashboard
+        </li>
+    </ol>
+}
+else
+{
+    <h4 class="page-title">@Menus.actions[action]</h4>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="javascript:void(0);">Big System Solutions</a></li>
+        <li class="breadcrumb-item"><a href="javascript:void(0);">@Menus.controllers[controller]</a></li>
+        <li class="breadcrumb-item active">@Menus.actions[action]</li>
+    </ol>
+}*@

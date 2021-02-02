@@ -1,0 +1,379 @@
+﻿@using Model.Entities
+@using Model
+@using BIgSystemSolutions_Web.Models
+@model OrderVM
+
+@{
+    User currentUser = (User)Session["User"];
+    BLL.OrderBL orderBL = new BLL.OrderBL();
+}
+
+<div class="row">
+    <div class="col-12">
+        @if (Model.Order != null)
+        {
+            foreach (Error e in Model.Order.Errors)
+            {
+                <div class="alert alert-danger text-center" role="alert">
+                    <strong>@e.ErrorName</strong>
+                </div>
+            }
+            foreach (Error e in Model.Item?.Errors.Where(x=> x.ErrorDescription != "ValidationResult") ?? new List<Error>())
+            {
+                <div class="alert alert-danger text-center" role="alert">
+                    <strong>@e.ErrorName</strong>
+                </div>
+            }
+        }
+        @if (Model != null && orderBL.CanBeClosed(Model.Order, currentUser))
+        {
+            <div class="alert alert-info text-center"><strong>Order Can Be Closed (click the button below PO summary)</strong></div>
+        }
+        @if (Model != null && Model.Order != null && orderBL.CheckIfOrderClosed(Model.Order))
+        {
+            <div class="alert alert-success text-center"><strong>Order Was Closed. Email notification was sent to initiating employee at @Model.Order.CreatedEmployee.Email</strong></div>
+        }
+        else if (Model.Order.Items.Count > 0)
+        {
+            <div class="alert alert-info text-center"><strong>Select Item in the Table to Make Changes</strong></div>
+        }
+        <div class="card m-b-20">
+            <div class="card-body">
+                <!-- Header PO Info-->
+                <div class="row">
+                    <div class="col-12">
+                        @if (Model != null && Model.Order != null && Model.Order.ID > 0)
+                        {
+                            <div class="invoice-title">
+                                <h4 class="float-right font-16"><strong>Order # @Model.Order.ID</strong></h4>
+                                <h3 class="mt-0">
+                                    <img src="~/images/logo1.png" alt="logo" height="100" />
+                                </h3>
+                            </div>
+                        }
+                        <hr>
+                        <div class="row">
+                            <div class="col-6 m-t-30 text-left">
+                                <address>
+                                    <strong>Employee ID:</strong><br>
+                                    <br>@(Model != null && Model.Order != null ? Model.Order.CreatedEmployee.ID : (currentUser).ID)<br>
+                                </address>
+                                <address>
+                                    <strong>Employee Name:</strong><br>
+                                    <br>@(Model != null && Model.Order != null ? Model.Order.CreatedEmployee.FullName : (currentUser).FullName)<br>
+                                </address>
+                                <address>
+                                    <strong>Department Name:</strong><br>
+                                    <br>@(Model != null && Model.Order != null ? Model.Order.CreatedEmployee.Departments.Name : (currentUser).Departments.Name)<br>
+                                </address>
+                                <address>
+                                    <strong>Supervisor Name:</strong><br>
+                                    <br>@(currentUser.Supervisor.FullName)<br>
+                                </address>
+                            </div>
+                            <div class="col-6 m-t-30 text-right">
+                                <address>
+                                    <strong>Order Date:</strong><br>
+                                    <br>@(Model != null && Model.Order.ID != 0 ? Model.Order.OrderDate.ToLongDateString() : DateTime.Now.ToLongDateString())<br>
+                                </address>
+                                <address>
+                                    <strong>Order Status:</strong><br>
+                                    <br>@(Model != null && Model.Order.ID != 0 ? Model.Order.Status.ToString() : string.Empty)<br>
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table of items-->
+                <div class="row">
+                    <div class="col-12">
+                        @if (Model != null && Model.Order != null && Model.Order.Items.Count > 0)
+                        {
+                            <div>
+                                <div class="p-2">
+                                    <h3 class="font-16"><strong>Order summary</strong></h3>
+                                </div>
+                                <div class="">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td><strong>Item Name</strong></td>
+                                                    <td class="text-center"><strong>Qty</strong></td>
+                                                    <td class="text-center">
+                                                        <strong>Description</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Justification</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Location</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Price</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Subtotal</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Status</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Modify Reason</strong>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <strong>Deny Reason</strong>
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (Item item in Model.Order.Items)
+                                                {
+                                                    <tr @(((!orderBL.CheckItemProcessed(item) || currentUser.IsSupervisor) && !item.NoLongerNeeded && !orderBL.CheckIfOrderClosed(Model.Order)) ? $"class=clickable-row data-href=/PurchaseOrder/ModifyItem?itemId={item.ID}" : "")>
+                                                        <td>@item.Name</td>
+                                                        <td class="text-center">@item.Quantity</td>
+                                                        <td class="text-center">@item.Description</td>
+                                                        <td class="text-center">@item.Justification</td>
+                                                        <td class="text-center">@item.Location</td>
+                                                        <td class="text-center">@item.Price.ToString("c")</td>
+                                                        <td class="text-center">@item.Subtotal.ToString("c")</td>
+                                                        <td class="text-center">@(orderBL.CheckIfOrderClosed(Model.Order) || currentUser.IsSupervisor || item.Status == ItemStatus.Pending? item.Status.ToString() : "Under Review")</td>
+                                                        <td class="text-center">@(item.ModifyReason?.ToString() ?? "")</td>
+                                                        <td class="text-center">@(item.DenyReason?.ToString() ?? "")</td>
+                                                    </tr>
+                                                }
+                                                <tr>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line text-center">
+                                                        <strong>Subtotal</strong>
+                                                    </td>
+                                                    <td class="thick-line text-right">@Model.Order.Subtotal.ToString("c")</td>
+                                                </tr>
+                                                <tr>
+                                                <tr>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line text-center">
+                                                        <strong>Sales Tax</strong>
+                                                    </td>
+                                                    <td class="thick-line text-right">@Model.Order.Taxes.ToString("c")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line"></td>
+                                                    <td class="thick-line text-center">
+                                                        <strong>Total</strong>
+                                                    </td>
+                                                    <td class="thick-line text-right">@Model.Order.Total.ToString("c")</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="d-print-none">
+
+                            <!-- Menu of actions -->
+                            <div class="float-right">
+                                <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light"><i class="fa fa-print"></i></a>
+                                <!-- Add items if purchase order is null-->
+                                @if (orderBL.CanAddItems(Model.Order, currentUser))
+                                {
+                                    @Html.ActionLink("Add Item", "CreateNewItem", "", new { @class = "btn btn-primary waves-effect waves-light" })
+                                }
+                                @if (Model != null && Model.Order != null && orderBL.CanBeClosed(Model.Order, currentUser))
+                                {
+                                    @Html.ActionLink("Close PO", "CloseOrder", "", new { @class = "btn btn-primary waves-effect waves-light" });
+                                }
+                                @Html.ActionLink("Go Back", "Index", "", new { @class = "btn btn-primary waves-effect waves-light" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Add  / Modifyitem forms -->
+@if (Model != null && Model.Item != null && Model.Order != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card m-b-20">
+                <div class="card-body">
+                    <h4 class="mt-0 header-title">@(Model.Item.ID == 0 ? "Add" : "Modify") Item to Purchase Requst</h4>
+                    <form class="form-horizontal" action="/PurchaseOrder/MaintainPO" method="post">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Item.ID)
+                        @Html.HiddenFor(m => m.Item.RestrictedModifying)
+                        @Html.HiddenFor(m => m.Item.TimeStamp)
+                        @if (!orderBL.RestrictModifying(Model.Order, currentUser, Model.Item))
+                        {
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Name)
+                                @Html.EditorFor(model => model.Item.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Name" } })
+                                @Html.ValidationMessageFor(m => m.Item.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Description)
+                                @Html.EditorFor(model => model.Item.Description, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Description" } })
+                                @Html.ValidationMessageFor(m => m.Item.Description, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Justification)
+                                @Html.EditorFor(model => model.Item.Justification, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Justification" } })
+                                @Html.ValidationMessageFor(m => m.Item.Justification, "", new { @class = "text-danger" })
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.ModifyReason)
+                                @Html.EditorFor(model => model.Item.ModifyReason, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Reason for Item Modification" } })
+                                @Html.ValidationMessageFor(m => m.Item.ModifyReason, "", new { @class = "text-danger" })
+                                <!-- temporary bug fix-->
+                                @if (Model.Item.Error != null && Model.Item.Error.Contains("ModifyReason Is required."))
+                                {
+                                    <div class="alert alert-danger mt-2">
+                                        ModifyReason Is required.
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Name)
+                                @Html.EditorFor(model => model.Item.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Name", @readonly = "true" } })
+                                @Html.ValidationMessageFor(m => m.Item.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Description)
+                                @Html.EditorFor(model => model.Item.Description, new { htmlAttributes = new { @class = "form-control", @readonly = "true" } })
+                                @Html.ValidationMessageFor(m => m.Item.Description, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Justification)
+                                @Html.EditorFor(model => model.Item.Justification, new { htmlAttributes = new { @class = "form-control", @readonly = "true" } })
+                                @Html.ValidationMessageFor(m => m.Item.Justification, "", new { @class = "text-danger" })
+                            </div>
+                        }
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Item.Location)
+                            @Html.EditorFor(model => model.Item.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Location" } })
+                            @Html.ValidationMessageFor(m => m.Item.Location, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Item.Quantity)
+                            @Html.EditorFor(model => model.Item.Quantity, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Quantity" } })
+                            @Html.ValidationMessageFor(m => m.Item.Quantity, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Item.Price)
+                            @Html.EditorFor(model => model.Item.Price, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Price" } })
+                            @Html.ValidationMessageFor(m => m.Item.Price, "", new { @class = "text-danger" })
+                        </div>
+                        @if (orderBL.CanBeProcessed(Model.Order, currentUser, Model.Item))
+                        {
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Item.Status)
+                                @Html.EnumDropDownListFor(m => m.Item.Status, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Item.Status, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group" id="denyReason"> @*@(Model.Item.DenyReason == null || Model.Item.DenyReason == "" ? "style=display:none": "style=display:block")>*@
+                                @Html.LabelFor(m => m.Item.DenyReason)
+                                @Html.EditorFor(model => model.Item.DenyReason, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Reason for Item Denial" } })
+                                @Html.ValidationMessageFor(m => m.Item.DenyReason, "", new { @class = "text-danger" })
+                            </div>
+                        }
+
+
+                        @if (Model == null || Model.Item == null || Model.Item.ID == 0)
+                        {
+                            <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Add Item</button>
+                        }
+                        else if (orderBL.CanBeProcessed(Model.Order, currentUser, Model.Item))
+                        {
+                            <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Modify / Process Item</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Modify Item</button>
+                        }
+                        @if (Model.Item != null && Model.Item.ID != 0 && !orderBL.RestrictedModifyMode(Model.Order, currentUser))
+                        {
+                            @Html.ActionLink("No Longer Needed", "RemoveItem", new { itemId = Model.Item.ID }, new { @class = "btn btn-primary waves-effect waves-light" })
+                        }
+
+
+                        <!-- Cancel button-->
+                        @if (Model.Order == null || Model.Order.ID == 0)
+                        {
+                            @Html.ActionLink("Cancel", "Requestnew", "", new { @class = "btn btn-primary waves-effect waves-light" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Cancel", "MaintainPO", "PurchaseOrder", new { PurchaseOrderID = Model?.Order?.ID ?? null }, new { @class = "btn btn-primary waves-effect waves-light" })
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script src="~/plugins/parsleyjs/parsley.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('form').parsley();
+
+            $(".clickable-row").click(function () {
+                window.location = $(this).data("href");
+            });
+        });
+
+        $('#Item_Status').on('change', function () {
+            if (this.value == 3) {
+                $('#denyReason').css("display", "block");
+            } else {
+                $('#denyReason').css("display", "none");
+            }
+        });
+
+        if ($('#Item_Status').val() == 3) {
+            $('#denyReason').css("display", "block");
+        } else {
+            $('#denyReason').css("display", "none");
+        }
+
+
+    </script>
+
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+}

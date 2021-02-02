@@ -1,0 +1,119 @@
+﻿@using Model.Entities
+
+@{
+    User currentUser = (User)Session["User"];
+}
+
+
+
+<div class="topbar">
+    <!-- LOGO -->
+    <div class="topbar-left">
+        <a href="/dashboard" class="logo">
+            <span>
+                <img src="~/images/logo1.png" alt="" height="50">
+            </span>
+            <i>
+                <img src="~/images/logo1.png" alt="" height="50">
+            </i>
+        </a>
+    </div>
+
+    <nav class="navbar-custom">
+        <ul class="navbar-right d-flex list-inline float-right mb-0">
+
+
+            <li class="dropdown notification-list">
+                <div class="dropdown notification-list nav-pro-img">
+                    <a class="dropdown-toggle nav-link arrow-none waves-effect nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        <img src="~/images/users/user-4.jpg" alt="user" class="rounded-circle">
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                        <!-- item-->
+                        <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle m-r-5"></i> Profile</a>
+                        <a class="dropdown-item" href=""><i class="mdi mdi-account-circle m-r-5"></i> Employee ID: @currentUser.ID</a>
+                        <a class="dropdown-item" href=""><i class="mdi mdi-account-circle m-r-5"></i> User Type: @(currentUser.IsSupervisor ? "Supervisor" : "Employee")</a>
+
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="/Dashboard/Login"><i class="mdi mdi-power text-danger"></i> Logout</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="list-inline menu-left mb-0">
+            <li class="float-left">
+                <button class="button-menu-mobile open-left waves-effect">
+                    <i class="mdi mdi-menu"></i>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="left side-menu">
+    <div class="slimscroll-menu" id="remove-scroll">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu" id="side-menu">
+                <li class="menu-title">Main</li>
+                <li>
+                    <a href="/" class="waves-effect">
+                        <i class="mdi mdi-view-dashboard"></i><span class="badge badge-primary badge-pill float-right">2</span> <span> Dashboard </span>
+                    </a>
+                </li>
+
+
+                <li class="menu-title">PO - Component</li>
+                <li>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-buffer"></i> <span> Purchase order <span class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span> </a>
+                    <ul class="submenu">
+                        <li>@Html.ActionLink("Browse POs", "Index", "PurchaseOrder")</li>
+                        @if (currentUser.IsSupervisor)
+                        {
+                            <li><a href="/PurchaseOrder/ProcessPOs">Process POs</a></li>
+                        }
+                        <li><a href="/PurchaseOrder/RequestNew">Request New</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-title">HR - Component</li>
+                <li>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-buffer"></i> <span> Human Resources <span class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span> </a>
+                    <ul class="submenu">
+                        @if (currentUser.IsSupervisor)
+                        {
+                            <li><a href="/Review">Create Reviews for Employees</a></li>
+                            <li><a href="/Employee/SearchEmployee">Search employees</a></li>
+                            <li><a href="/Department/Modify">Modify Department</a></li>
+                            <li><a href="/Review/MyReviews">View Reviews for Employees</a></li>
+                        }
+                        @if (!currentUser.IsSupervisor)
+                        {
+                            <li><a href="/Review/MyReviews">Performance Reviews</a></li>
+                        }
+                        <li><a href="/Employee">Personal Employee Record</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-title">Extras</li>
+                <li>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-account-location"></i><span> Authentication <span class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                    <ul class="submenu">
+                        <li><a href="/Dashboard/Login">Login</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+
+        </div>
+        <!-- Sidebar -->
+        <div class="clearfix"></div>
+
+    </div>
+    <!-- Sidebar -left -->
+
+</div>

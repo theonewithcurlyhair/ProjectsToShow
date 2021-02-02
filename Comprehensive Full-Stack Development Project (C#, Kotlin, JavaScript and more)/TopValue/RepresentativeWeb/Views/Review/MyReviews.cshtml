@@ -1,0 +1,78 @@
+﻿@using Model.Entities
+@using System.Globalization;
+@model List<Review>
+
+@if (Model != null)
+{
+    foreach (var review in Model)
+    {
+        if (review.Errors.Count > 0)
+        {
+            <div class="text-danger">
+                <ul>
+                    @foreach (var e in review.Errors)
+                    {
+                        <li>@e.ErrorName</li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card m-b-20">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div>
+                            <div class="p-2">
+                                <h3 class="font-16"><strong>My reviews</strong></h3>
+                            </div>
+                            @if (Model.Count > 0)
+                            {
+                                <div class="">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td class="text-center"><strong>ID</strong></td>
+                                                    <td class="text-center"><strong>Year</strong></td>
+                                                    <td class="text-center">
+                                                        <strong>Quater</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong>Date</strong>
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var review in Model)
+                                                {
+                                                    <tr>
+                                                        <td class="thick-line text-center">@review.ID</td>
+                                                        <td class="thick-line text-center">@review.ReviewDate.Year</td>
+                                                        <td class="thick-line text-center">@review.ReviewQuater</td>
+                                                        <td class="thick-line text-center">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(review.ReviewDate.Month) , @review.ReviewDate.Day</td>
+                                                        <td class="thick-line text-center">@Html.ActionLink("Details", "Details",  new { id = review.ID }, new { @class = "btn btn-primary waves-effect waves-light" })</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <h5 style="text-align:center">You have no reviews just yet!</h5>
+                            }
+                        </div>
+
+                    </div>
+                </div> <!-- end row -->
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->

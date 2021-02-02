@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:fillViewport="true"
+
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ll_email"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/et_toemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_12sdp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/black_border_layout"
+            android:fontFamily="@font/muli"
+            android:hint="To"
+            android:clickable="false"
+            android:enabled="false"
+            android:padding="@dimen/_11sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingLeft="@dimen/_10sdp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_toemail"
+            android:layout_margin="@dimen/_12sdp"
+            android:background="@drawable/black_border_layout"
+            android:fontFamily="@font/muli"
+            android:hint="Subject"
+            android:padding="@dimen/_11sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingLeft="@dimen/_10sdp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_toemail" />
+
+        <EditText
+            android:id="@+id/et_email_body"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/et_subject"
+            android:layout_margin="@dimen/_12sdp"
+            android:background="@drawable/black_border_layout"
+            android:fontFamily="@font/muli"
+            android:gravity="top|left"
+            android:hint="Message Body"
+            android:inputType="textMultiLine"
+            android:lines="10"
+            android:maxLines="10"
+            android:minLines="2"
+            android:padding="@dimen/_11sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingLeft="@dimen/_10sdp"
+            android:scrollbars="vertical"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/send_email_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_subject" />
+
+        <Button
+            android:id="@+id/send_email_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/rounded_btn_enabled"
+            android:padding="@dimen/_13sdp"
+            android:layout_margin="@dimen/_10sdp"
+            android:text="Send"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

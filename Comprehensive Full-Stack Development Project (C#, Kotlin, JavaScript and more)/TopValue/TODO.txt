@@ -1,0 +1,23 @@
+
+- move everything to business layer
+
+
+concurrency - transactions - windows check
+
+erd
+uml
+
+10000150, 10000101, 10000105, 10000115, 10000120 -- just sups
+
+	10000110, 10000102, 10000111, 10000144, 10000135 -- senior sups
+
+
+	win
+		item status don't display
+
+
+
+BUGS
+
+- error provider
+-pop up beforehand

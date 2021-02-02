@@ -1,0 +1,63 @@
+﻿@model  BIgSystemSolutions_Web.Models.EmpSearchVM
+@{
+    ViewBag.Title = "SearchEmployee";
+}
+
+<h2>SearchEmployee</h2>
+
+@using (Html.BeginForm("SearchEmployee", "Employee", FormMethod.Post, new { id = "searchForm", name = "searchForm" }))
+{
+    if (Model.User.Errors.Count > 0)
+    {
+        <div class="text-danger">
+            <ul>
+                @foreach (var e in Model.User.Errors)
+                {
+                    <li>@e.ErrorName</li>
+                }
+            </ul>
+        </div>
+    }
+
+    @Html.DropDownList("cmbSearch", new SelectList(Model.searchList, "Value", "Text"), new { @class = "form-control", @id = "cmbSearch" })
+    <p></p>
+    @Html.TextBox("employeeName", null, new { @class = "form-control", @id = "employeeName" })
+    <p></p>
+    @Html.DropDownList("cmbEmployee", new SelectList(Model.foundEmployee, "Value", "Text"), new { @class = "form-control", @id = "cmbEmployee" })
+    <p></p>
+
+    <div class="form-group">
+        <div class="col-md-offset-5 col-md-10">
+            <button type="submit" class="btn btn-primary btn-lg waves-effect waves-light">Search</button>
+        </div>
+    </div>
+}
+
+<div id="partialDiv">
+
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('option[value=""]').attr("disabled", "disabled");
+            $("#cmbEmployee").on("change", function () {
+                let empId = $(this).val();
+                $.ajax(
+                    {
+                        url: '/Employee/GetEmployeeRecord?cmbEmployee=' + empId,
+                        type: 'GET',
+                        data: "",
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            $("#partialDiv").html(data);
+                        }
+                    });
+            });
+        });
+    </script>
+
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+}

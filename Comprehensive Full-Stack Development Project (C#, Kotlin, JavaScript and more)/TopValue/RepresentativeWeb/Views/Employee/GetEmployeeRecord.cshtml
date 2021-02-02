@@ -1,0 +1,30 @@
+﻿@model  Model.Entities.User
+
+<div class="display-label">
+    <strong> @Html.DisplayNameFor(model => model.WorkPhoneNumber) </strong>
+</div>
+<div class="display-field">
+    @Html.EditorFor(model => model.WorkPhoneNumber, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+</div>
+
+<div class="display-label">
+    <strong> @Html.DisplayNameFor(model => model.CellPhoneNumber) </strong>
+</div>
+<div class="display-field">
+    @Html.EditorFor(model => model.CellPhoneNumber, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+</div>
+
+<div class="display-label">
+    <strong> @Html.DisplayNameFor(model => model.Email) </strong>
+</div>
+<div class="display-field">
+    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+</div>
+
+<div class="display-label">
+    <strong> @Html.DisplayNameFor(model => model.Address) </strong>
+</div>
+<div class="display-field">
+    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+</div>
+

@@ -1,0 +1,94 @@
+﻿@model  BIgSystemSolutions_Web.Models.ReviewVM
+
+@if (Model.Review != null)
+{
+    if (Model.Review.Errors.Count > 0)
+    {
+        <div class="text-danger">
+            <ul>
+                @foreach (var e in Model.Review.Errors)
+                {
+                    <li>@e.ErrorName</li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+
+@if (ViewBag.Success != "")
+{
+    <p style="color:green">@ViewBag.Success</p>
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card m-b-20">
+            <div class="card-body">
+                <h4 class="mt-0 header-title">Add Review to employee by @ViewBag.EmpName</h4>
+                <form class="form-horizontal" action="/Review/Index" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        @Html.DropDownList("cmbEmps", new SelectList(Model.supervisedEmployeeList, "Value", "Text"), new { @class = "form-control", @id = "cmbSearch"})
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Review.PerfomanceRating)
+                        @Html.EnumDropDownListFor(model => model.Review.PerfomanceRating, new { @class = "form-control"})
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Review.Comment)
+                        <textarea id="elm1" name="reviewComment"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="datepicker-autoclose" name="dtpReviewTime">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                </div>
+                            </div><!-- input-group -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Add Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
+    <script src="~/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script src="~/plugins/select2/js/select2.min.js"></script>
+    <script src="~/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
+    <script src="~/Scripts/pages/form-advanced.js"></script>
+    <script src="~/plugins/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('option[value=""]').attr("disabled", "disabled");
+            if ($("#elm1").length > 0) {
+                tinymce.init({
+                    selector: "textarea#elm1",
+                    theme: "modern",
+                    height: 300,
+                    plugins: [
+                        "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                        "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                        "save table contextmenu directionality emoticons template paste textcolor"
+                    ],
+                    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                    style_formats: [
+                        { title: 'Bold text', inline: 'b' },
+                        { title: 'Red text', inline: 'span', styles: { color: '#ff0000' } },
+                        { title: 'Red header', block: 'h1', styles: { color: '#ff0000' } },
+                        { title: 'Example 1', inline: 'span', classes: 'example1' },
+                        { title: 'Example 2', inline: 'span', classes: 'example2' },
+                        { title: 'Table styles' },
+                        { title: 'Table row 1', selector: 'tr', classes: 'tablerow1' }
+                    ]
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,42 @@
+﻿@model Model.DTO.ReviewDetailsDTO
+
+@{
+    ViewBag.Title = "Details";
+}
+<div>
+    <h4>Review Details</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SupervisorName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SupervisorName, new { htmlAttributes = new { @class = "form-control", disabled = "disbled" } })
+            @Html.ValidationMessageFor(model => model.SupervisorName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.review.PerfomanceRating, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.review.PerfomanceRating, new { htmlAttributes = new { @class = "form-control", disabled = "disbled" } })
+            @Html.ValidationMessageFor(model => model.review.PerfomanceRating, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.review.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.review.Comment, new { @class = "form-control", @readonly = true })
+            @Html.ValidationMessageFor(model => model.review.Comment, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.review.ReviewDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.review.ReviewDate, new { htmlAttributes = new { @class = "form-control", disabled = "disbled" } })
+            @Html.ValidationMessageFor(model => model.review.ReviewDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+</div>
+
+<button>@Html.ActionLink("Back to List", "MyReviews")</button>

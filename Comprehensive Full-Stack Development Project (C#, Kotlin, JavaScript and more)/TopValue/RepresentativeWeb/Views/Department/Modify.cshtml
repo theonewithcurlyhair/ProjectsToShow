@@ -1,0 +1,51 @@
+﻿@using Model.Entities
+@using System.Linq
+@model List<Departments>
+@{
+    ViewBag.Title = "SearchEmployee";
+}
+
+<h2>Modify Department</h2>
+
+
+
+@Html.DropDownList("cmbDepartments", Model.Select(item => new SelectListItem
+{
+    Value = item.DepartmentID.ToString(),
+    Text = item.Name.ToString()
+
+}), new { @class = "form-control", @id = "cmbDepartments" })
+
+
+<div id="partialDiv">
+
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('option[value="0"]').attr("disabled", "disabled");
+            $("#cmbDepartments").on("change", function () {
+                let depId = $(this).val();
+                $.ajax(
+                    {
+                        url: '/Department/GetDepartmentRecord?cmbDepartments=' + depId,
+                        type: 'GET',
+                        data: "",
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            $("#partialDiv").html(data);
+                        }
+                    });
+            });
+        });
+    </script>
+
+    <script src="@Url.Content("~/Scripts/jquery-3.5.0.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
